@@ -1,0 +1,9 @@
+{
+  "oaipmh_endpoints": [
+    {
+      "name": "UNJBG",
+      "url": "https://repositorio.unjbg.edu.pe/server/oai/request?verb=ListRecords&metadataPrefix=oai_dc"
+    }
+  ],
+  "oaipmh_output_dir": "data"
+}

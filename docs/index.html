@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explora investigaciones de la UNJBG que mencionan Tacna. Indicadores, evolución anual y acceso a los documentos originales.">
+  <title>Investigaciones sobre Tacna</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23193b38'/%3E%3Ctext x='16' y='23' text-anchor='middle' fill='white' font-family='sans-serif' font-size='24'%3ET%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="core.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#contenido">Ir al contenido</a>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">T</span><span>TACNA<span class="brand-sub">EXPLORADOR ACADÉMICO</span></span></div>
+    <a class="source-link" href="https://github.com/Durdenxito/investigaciones-tacna-data" target="_blank" rel="noopener noreferrer">Datos abiertos ↗</a>
+  </header>
+  <main id="contenido">
+    <section class="intro">
+      <p class="eyebrow">INVESTIGACIÓN · UNJBG · ACCESO ABIERTO</p>
+      <h1>Una mirada a la investigación<br><span>que menciona Tacna.</span></h1>
+      <p class="lede">Explora las publicaciones, sigue su evolución y encuentra los estudios detrás de los números.</p>
+      <p class="scope">Fuente: repositorio académico de la UNJBG. Selección por la palabra Tacna en título, resumen o materias.</p>
+    </section>
+    <nav class="pages" aria-label="Páginas del informe">
+      <button type="button" id="nav-panorama" aria-pressed="true">01 <span>Panorama</span></button>
+      <button type="button" id="nav-explorar" aria-pressed="false">02 <span>Explorar investigaciones</span></button>
+    </nav>
+    <form class="filters" id="filters">
+      <label>Año de publicación<select id="year"><option value="">Todos los años</option></select></label>
+      <label>Madurez estimada<select id="level"><option value="">Todos los niveles</option><option value="Teorico">Teórico</option><option value="Prototipo / Piloto">Prototipo / Piloto</option><option value="En Produccion">En producción</option></select></label>
+      <label class="search-label">Buscar un estudio<input id="search" type="search" placeholder="Título, autor o tema…"></label>
+      <button type="reset" class="reset">Limpiar filtros</button>
+    </form>
+    <p id="status" role="status" aria-live="polite">Consultando las investigaciones…</p>
+    <button id="retry" type="button" hidden>Reintentar descarga</button>
+    <section id="panorama" aria-labelledby="panorama-title" hidden>
+      <h2 id="panorama-title" class="visually-hidden">Panorama de investigaciones</h2>
+      <div class="metrics">
+        <article class="metric"><p>Investigaciones</p><strong id="total">—</strong><span>Registros en la selección</span></article>
+        <article class="metric"><p>Señales de aplicación</p><strong id="applied">—</strong><span>Prototipo, piloto o producción</span></article>
+        <article class="metric"><p>Porcentaje con señales</p><strong id="rate">—</strong><span>Sobre las investigaciones filtradas</span></article>
+        <article class="metric"><p>Señales de producción</p><strong id="production">—</strong><span>Para contrastar con el documento</span></article>
+      </div>
+      <div class="charts">
+        <article class="panel year-panel"><div class="panel-heading"><div><p class="eyebrow">EVOLUCIÓN</p><h2>Investigaciones por año</h2></div><span>Publicaciones</span></div><div id="years-chart" class="year-chart" role="list" aria-label="Cantidad de investigaciones por año"></div><p class="chart-note">El año en curso está incompleto. Los datos representan esta fuente, no toda la producción científica regional.</p></article>
+        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">APLICACIÓN POTENCIAL</p><h2>Madurez estimada</h2></div></div><div id="levels-chart" class="level-chart" role="list" aria-label="Cantidad por nivel de madurez"></div><p class="chart-note">Clasificación por palabras del resumen. Una señal no acredita que el trabajo esté implementado.</p></article>
+      </div>
+      <aside class="notice"><strong>Los números son un punto de partida.</strong> Consulta el estudio original para conocer su alcance, metodología y resultados. La mención de Tacna no certifica el lugar de ejecución.</aside>
+    </section>
+    <section id="explorar" aria-labelledby="explorar-title" hidden>
+      <div class="table-heading"><div><p class="eyebrow">DEL INDICADOR AL DOCUMENTO</p><h2 id="explorar-title">Explora los estudios</h2></div><p><strong id="results">0</strong> resultados</p></div>
+      <div class="table-wrap"><table><caption class="visually-hidden">Investigaciones filtradas, ordenadas por año descendente</caption><thead><tr><th scope="col">Investigación y autores</th><th scope="col">Año</th><th scope="col">Materias</th><th scope="col">Madurez estimada</th><th scope="col">Documento</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="pagination"><p id="page-info" aria-live="polite"></p><div><button id="previous" type="button">← Anterior</button><button id="next" type="button">Siguiente →</button></div></div>
+    </section>
+    <footer><p>Investigaciones sobre Tacna · Fuente académica: <a href="https://repositorio.unjbg.edu.pe/" target="_blank" rel="noopener noreferrer">UNJBG ↗</a></p><p>Datos actualizados semanalmente mediante GitHub Actions. <a id="download" href="https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/investigaciones_tacna.csv">Descargar CSV ↗</a></p></footer>
+  </main>
+</body>
+</html>

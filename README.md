@@ -29,3 +29,10 @@ python etl/main_oaipmh.py
 ```
 
 El CSV se guarda en data/investigaciones_tacna.csv.
+
+## Dashboard publico
+
+https://durdenxito.github.io/investigaciones-tacna-data/
+
+Dos paginas interactivas, filtros compartidos y enlaces a los estudios. El sitio lee el CSV publico al abrirse; para ver nuevos datos, volver a cargar la pagina. No requiere Power BI ni mantener un equipo encendido. Fuente del sitio: docs/. Pruebas web: node tests/test_web.cjs.
+

@@ -1,0 +1,22 @@
+﻿const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const data = require('../docs/core.js');
+const header = 'titulo,autores,anio,abstract,enlace,materias,universidad,nivel_madurez';
+const sample = `${header}\r\n"Tacna, estudio","Autor ""A""",2020,"Linea 1\nLinea 2",https://example.test,Tacna,UNJBG,Teorico\r\n`;
+const rows = data.parseCSV(sample);
+assert.equal(rows[0].titulo, 'Tacna, estudio');
+assert.equal(rows[0].autores, 'Autor "A"');
+assert.equal(rows[0].abstract, 'Linea 1\nLinea 2');
+assert.throws(() => data.parseCSV(header + '\n"incompleto'));
+assert.throws(() => data.parseCSV('columna\nvalor'));
+assert.equal(data.safeLink('javascript:alert(1)'), null);
+assert.equal(data.safeLink('https://example.test/'), 'https://example.test/');
+assert.deepEqual(data.stats([]), {total: 0, applied: 0, production: 0, rate: 0});
+assert.equal(data.filterRecords(rows, '2020', 'Teorico', 'lÃ­nea').length, 1);
+assert.equal(data.filterRecords(rows, '2021', '', '').length, 0);
+assert.deepEqual(data.stats([...rows, {...rows[0], nivel_madurez: 'Prototipo / Piloto'}, {...rows[0], nivel_madurez: 'En Produccion'}]), {total: 3, applied: 2, production: 1, rate: 2 / 3 * 100});
+const records = data.parseCSV(fs.readFileSync('data/investigaciones_tacna.csv', 'utf8'));
+assert.ok(records.length > 0);
+assert.ok(records.every(r => /\btacna\b/i.test([r.titulo, r.abstract, r.materias].join(' '))));
+console.log('OK: parser CSV real, filtros, indicadores, resultados vacÃ­os y enlaces seguros.');
+

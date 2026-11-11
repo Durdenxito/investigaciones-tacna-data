@@ -50,16 +50,16 @@ function renderTable() {
   $('results').textContent = number.format(selected.length); $('rows').replaceChildren();
   selected.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).forEach(r => {
     const row = element('tr'), titleCell = element('td');
-    titleCell.append(element('p', r.titulo || 'Sin título', 'study-title'), element('p', r.universidad + ' ? ' + (r.autores || 'Autor no informado'), 'authors'));
+    titleCell.append(element('p', r.titulo || 'Sin título', 'study-title'), element('p', r.universidad + ' · ' + (r.autores || 'Autor no informado'), 'authors'));
     if (r.abstract) {
       const details = element('details'); details.append(element('summary', 'Leer resumen'), element('p', r.abstract)); titleCell.append(details);
     }
-    if (r.evidencia) { const proof = element('details'); proof.append(element('summary', 'Ver se?al textual'), element('p', r.evidencia)); titleCell.append(proof); }
+    if (r.evidencia) { const proof = element('details'); proof.append(element('summary', 'Ver señal textual'), element('p', r.evidencia)); titleCell.append(proof); }
     const levelCell = element('td'); levelCell.append(element('span', labels[r.madurez_id], 'badge' + (r.madurez_id === 'produccion' ? ' production' : r.madurez_id === 'piloto' ? ' pilot' : '')));
     const linkCell = element('td'), url = TacnaData.safeLink(r.enlace);
     if (url) { const link = element('a', 'Abrir estudio ↗'); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.setAttribute('aria-label', 'Abrir estudio: ' + r.titulo); linkCell.append(link); }
     else linkCell.textContent = 'No disponible';
-    row.append(titleCell, element('td', r.anio || 'Sin a?o'), element('td', r.materias || 'Sin materias'), levelCell, linkCell); $('rows').append(row);
+    row.append(titleCell, element('td', r.anio || 'Sin año'), element('td', r.materias || 'Sin materias'), levelCell, linkCell); $('rows').append(row);
   });
   if (!selected.length) { const cell = element('td', 'No hay resultados. Prueba otro año, nivel o término de búsqueda.'); cell.colSpan = 5; const row = element('tr'); row.append(cell); $('rows').append(row); }
   $('page-info').textContent = selected.length ? `${page * PAGE_SIZE + 1}–${Math.min((page + 1) * PAGE_SIZE, selected.length)} de ${number.format(selected.length)} investigaciones` : '0 investigaciones';
@@ -90,7 +90,7 @@ async function load() {
     records = data; loaded = true;
     $('year').replaceChildren(new Option('Todos los años', ''));
     [...new Set(records.map(r => r.anio).filter(Boolean))].sort((a, b) => b - a).forEach(year => $('year').add(new Option(year, year)));
-    if (records.some(r => r.anio === null)) $('year').add(new Option('Sin a?o conocido', 'desconocido'));
+    if (records.some(r => r.anio === null)) $('year').add(new Option('Sin año conocido', 'desconocido'));
     $('university').replaceChildren(new Option('Todas las universidades', ''));
     [...new Set(records.map(r => r.universidad))].sort((a,b) => a.localeCompare(b, 'es')).forEach(u => $('university').add(new Option(u, u)));
     $('coverage').textContent = model.cobertura.map(c => c.universidad + ': ' + (c.alcance.includes('historica') ? 'selección histórica disponible' : 'catálogo recolectado')).join(' · ');

@@ -32,3 +32,7 @@ El PBIX binario anterior no se reescribe automáticamente. Puede seguir leyendo 
 - Documentación: `python documentos/actualizar_modelo.py`, renderizar PlantUML, `python documentos/generar.py` y `python documentos/verificar.py`.
 
 `Generar documentacion` ejecuta el proceso en el repositorio académico. En pull requests adjunta artefactos; en main versiona los documentos. `Validar modelo compartido` reproduce el modelo sin depender de las universidades y adjunta SQLite como artefacto; el binario SQLite no se versiona.
+
+CI instala las versiones de `requirements.lock.txt` y `documentos/requirements.lock.txt`, comprueba SHA256 y admite solo wheels. Al cambiar dependencias, actualizar también sus versiones y hashes en esos archivos.
+
+Sonar puede señalar las constantes XML de `etl/extract_oaipmh.py` con S5332. Son identificadores de namespace, no conexiones de red: [la especificación OAI-PMH](https://www.openarchives.org/OAI/openarchivesprotocol.html) exige esos URI con `http://`. Sustituirlos por HTTPS impediría reconocer los documentos. Esa observación requiere revisión como falso positivo en Sonar; no se desactiva la regla global.

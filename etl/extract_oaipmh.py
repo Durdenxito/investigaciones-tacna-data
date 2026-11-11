@@ -6,8 +6,8 @@ from datetime import datetime, timezone
 from urllib.parse import urlencode
 import requests
 
-OAI = 'http://www.openarchives.org/OAI/2.0/'  # NOSONAR: identificador XML normativo OAI-PMH; no es una conexion HTTP.
-DC = 'http://purl.org/dc/elements/1.1/'  # NOSONAR: identificador XML normativo Dublin Core; no es una conexion HTTP.
+OAI = 'http://www.openarchives.org/OAI/2.0/'  # identificador XML normativo OAI-PMH; no es una conexion HTTP.
+DC = 'http://purl.org/dc/elements/1.1/'  # identificador XML normativo Dublin Core; no es una conexion HTTP.
 
 
 def parse_oai(content, name, url):

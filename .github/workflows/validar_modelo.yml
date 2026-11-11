@@ -1,0 +1,25 @@
+name: Validar modelo compartido
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - name: Reproducir captura sin depender de fuentes externas
+        run: python etl/main_oaipmh.py --desde-json data/origen.json
+      - run: node tests/test_web.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: catalogo-normalizado
+          path: data/catalogo.sqlite
+          retention-days: 7

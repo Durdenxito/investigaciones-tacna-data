@@ -1,0 +1,36 @@
+// ============================================================
+// Medidas DAX - Investigaciones Tacna (OAI-PMH)
+// Tabla fuente: Investigaciones
+// ============================================================
+
+// Conteo total de investigaciones
+Total_Investigaciones = COUNTROWS(Investigaciones)
+
+// Investigaciones con validacion empirica o despliegue
+Investigaciones_Implementadas = 
+CALCULATE(
+    [Total_Investigaciones],
+    Investigaciones[nivel_madurez] IN {"Prototipo / Piloto", "En Produccion"}
+)
+
+// Tasa porcentual de implementacion
+Tasa_Implementacion_% = 
+DIVIDE(
+    [Investigaciones_Implementadas],
+    [Total_Investigaciones],
+    0
+)
+
+// Investigaciones con impacto productivo directo
+En_Produccion_Directa = 
+CALCULATE(
+    [Total_Investigaciones],
+    Investigaciones[nivel_madurez] = "En Produccion"
+)
+
+// Investigaciones por universidad
+Total_Por_Universidad = 
+CALCULATE(
+    [Total_Investigaciones],
+    ALLEXCEPT(Investigaciones, Investigaciones[universidad])
+)

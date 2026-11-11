@@ -1,26 +1,26 @@
+"""Recolecta ambas universidades y publica el modelo web y Power BI."""
+import argparse
 import json
-import os
-from extract_oaipmh import extractOaipmhData
-from transform_oaipmh import transformOaipmhData
-from load_oaipmh import loadOaipmhToCsv
+from pathlib import Path
+from fuentes import recolectar
+from modelo import construir, publicar
+
 
 def main():
-    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-    with open(config_path, 'r', encoding='utf-8') as f:
-        config = json.load(f)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--desde-json', type=Path, help='Reprocesar captura sin red')
+    args = parser.parse_args()
+    root = Path(__file__).resolve().parents[1]
+    config = json.loads((root / 'etl/config.json').read_text(encoding='utf-8'))
+    if args.desde_json:
+        saved = json.loads(args.desde_json.read_text(encoding='utf-8'))
+        raw, coverage = saved['registros'], saved['cobertura']
+    else:
+        raw, coverage = recolectar(config)
+    model = construir(raw, coverage)
+    result = publicar(model, root / config['oaipmh_output_dir'], raw=raw)
+    print(json.dumps(result, ensure_ascii=True, indent=2))
 
-    print("Starting Tacna research OAI-PMH ETL pipeline...")
-    
-    print("Extracting data...")
-    raw_data = extractOaipmhData(config)
-    
-    print("Transforming data...")
-    df = transformOaipmhData(raw_data)
-    
-    print("Loading data...")
-    loadOaipmhToCsv(df, config)
-    
-    print("Pipeline completed successfully.")
 
 if __name__ == '__main__':
     main()

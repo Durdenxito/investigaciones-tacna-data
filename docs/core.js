@@ -29,20 +29,57 @@
     });
   }
   const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  function filterRecords(records, year, level, search) {
+  function filterRecords(records, year, level, search, university = '') {
     const term = normalize(search.trim());
-    return records.filter(r => (!year || r.anio === Number(year)) && (!level || r.nivel_madurez === level) && (!term || normalize([r.titulo, r.autores, r.materias, r.abstract].join(' ')).includes(term)));
+    return records.filter(r => (!year || (year === 'desconocido' ? r.anio === null : r.anio === Number(year))) && (!level || (r.madurez_id || r.nivel_madurez) === level) && (!university || r.universidad === university) && (!term || normalize([r.titulo, r.autores, r.materias, r.abstract].join(' ')).includes(term)));
   }
   function stats(records) {
-    const production = records.filter(r => r.nivel_madurez === 'En Produccion').length;
-    const applied = records.filter(r => r.nivel_madurez !== 'Teorico').length;
+    const production = records.filter(r => r.madurez_id === 'produccion' || r.nivel_madurez === 'En Produccion').length;
+    const applied = records.filter(r => ['piloto', 'produccion'].includes(r.madurez_id) || ['Prototipo / Piloto', 'En Produccion'].includes(r.nivel_madurez)).length;
     return {total: records.length, applied, production, rate: records.length ? applied / records.length * 100 : 0};
   }
   function safeLink(value) {
     try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : null; }
     catch { return null; }
   }
-  const api = {parseCSV, filterRecords, stats, safeLink};
+  function fromStar(model) {
+    if (!model || model.schema_version !== 1) throw new Error('Version de datos no compatible.');
+    const index = (name, key) => {
+      if (!Array.isArray(model[name])) throw new Error('Falta tabla: ' + name);
+      const result = new Map();
+      for (const row of model[name]) {
+        if (!row || row[key] === undefined || result.has(row[key])) throw new Error('Clave invalida: ' + name);
+        result.set(row[key], row);
+      }
+      return result;
+    };
+    const universities = index('universidades', 'universidad_id'), years = index('anios', 'anio_id');
+    const levels = index('madurez', 'madurez_id'), catalog = index('registros', 'registro_id');
+    const facts = index('hechos', 'registro_id'), authors = index('autores', 'autor_id'), subjects = index('materias', 'materia_id');
+    if (facts.size !== catalog.size) throw new Error('Catalogo y hechos no coinciden.');
+    const join = (table, dimension, key, ordered) => {
+      if (!Array.isArray(model[table])) throw new Error('Falta puente: ' + table);
+      const result = new Map(), pairs = new Set();
+      const rows = ordered ? [...model[table]].sort((a,b) => a.orden - b.orden) : model[table];
+      for (const row of rows) {
+        const pair = row.registro_id + ':' + row[key];
+        if (!facts.has(row.registro_id) || !dimension.has(row[key]) || pairs.has(pair)) throw new Error('Relacion invalida: ' + table);
+        pairs.add(pair);
+        if (!result.has(row.registro_id)) result.set(row.registro_id, []);
+        result.get(row.registro_id).push(dimension.get(row[key]).nombre);
+      }
+      return result;
+    };
+    const authorNames = join('registro_autor', authors, 'autor_id', true);
+    const subjectNames = join('registro_materia', subjects, 'materia_id', false);
+    return [...facts.values()].map(fact => {
+      const r = catalog.get(fact.registro_id), u = universities.get(fact.universidad_id), m = levels.get(fact.madurez_id);
+      if (!r || !u || !m || !years.has(fact.anio_id) || typeof r.titulo !== 'string' || typeof r.abstract !== 'string' || fact.menciona_tacna !== true) throw new Error('Registro o dimension invalida.');
+      return {...r, anio: fact.anio_id || null, universidad: u.sigla, madurez_id: fact.madurez_id,
+        nivel_madurez: m.nombre, autores: (authorNames.get(r.registro_id) || []).join('; '), materias: (subjectNames.get(r.registro_id) || []).join('; ')};
+    });
+  }
+  const api = {parseCSV, fromStar, filterRecords, stats, safeLink};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TacnaData = api;
 })(globalThis);

@@ -1,9 +1,9 @@
 'use strict';
-const CSV_URL = 'https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/investigaciones_tacna.csv';
+const MODEL_URL = new URL('modelo_web.json', new URL(document.querySelector('meta[name=datos-base]').content, location.href));
 const $ = id => document.getElementById(id);
 const number = new Intl.NumberFormat('es-PE');
-const labels = {'Teorico': 'Teórico', 'Prototipo / Piloto': 'Prototipo / Piloto', 'En Produccion': 'En producción'};
-const colors = {'Teorico': 'var(--gray)', 'Prototipo / Piloto': 'var(--blue)', 'En Produccion': 'var(--green)'};
+const labels = {sin_evidencia: 'Sin evidencia textual detectada', piloto: 'Indicios de prototipo / piloto', produccion: 'Indicios de producción', sin_resumen: 'Resumen no disponible'};
+const colors = {sin_evidencia: 'var(--gray)', piloto: 'var(--blue)', produccion: 'var(--green)', sin_resumen: 'var(--gray)'};
 let records = [], selected = [], page = 0, view = 'panorama', loaded = false;
 const PAGE_SIZE = 25;
 function element(tag, text, className) {
@@ -32,7 +32,7 @@ function renderCharts() {
     bar.append(element('span', number.format(count)));
     item.append(bar, element('span', String(year), 'year-label')); $('years-chart').append(item);
   });
-  const levels = Object.keys(labels).map(level => [level, selected.filter(r => r.nivel_madurez === level).length]);
+  const levels = Object.keys(labels).map(level => [level, selected.filter(r => r.madurez_id === level).length]);
   const largest = Math.max(1, ...levels.map(item => item[1]));
   $('levels-chart').replaceChildren();
   levels.forEach(([level, count]) => {
@@ -48,22 +48,23 @@ function renderTable() {
   $('results').textContent = number.format(selected.length); $('rows').replaceChildren();
   selected.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).forEach(r => {
     const row = element('tr'), titleCell = element('td');
-    titleCell.append(element('p', r.titulo || 'Sin título', 'study-title'), element('p', r.autores || 'Autor no informado', 'authors'));
+    titleCell.append(element('p', r.titulo || 'Sin título', 'study-title'), element('p', r.universidad + ' ? ' + (r.autores || 'Autor no informado'), 'authors'));
     if (r.abstract) {
       const details = element('details'); details.append(element('summary', 'Leer resumen'), element('p', r.abstract)); titleCell.append(details);
     }
-    const levelCell = element('td'); levelCell.append(element('span', labels[r.nivel_madurez], 'badge' + (r.nivel_madurez === 'En Produccion' ? ' production' : r.nivel_madurez === 'Prototipo / Piloto' ? ' pilot' : '')));
+    if (r.evidencia) { const proof = element('details'); proof.append(element('summary', 'Ver se?al textual'), element('p', r.evidencia)); titleCell.append(proof); }
+    const levelCell = element('td'); levelCell.append(element('span', labels[r.madurez_id], 'badge' + (r.madurez_id === 'produccion' ? ' production' : r.madurez_id === 'piloto' ? ' pilot' : '')));
     const linkCell = element('td'), url = TacnaData.safeLink(r.enlace);
     if (url) { const link = element('a', 'Abrir estudio ↗'); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.setAttribute('aria-label', 'Abrir estudio: ' + r.titulo); linkCell.append(link); }
     else linkCell.textContent = 'No disponible';
-    row.append(titleCell, element('td', r.anio), element('td', r.materias || 'Sin materias'), levelCell, linkCell); $('rows').append(row);
+    row.append(titleCell, element('td', r.anio || 'Sin a?o'), element('td', r.materias || 'Sin materias'), levelCell, linkCell); $('rows').append(row);
   });
   if (!selected.length) { const cell = element('td', 'No hay resultados. Prueba otro año, nivel o término de búsqueda.'); cell.colSpan = 5; const row = element('tr'); row.append(cell); $('rows').append(row); }
   $('page-info').textContent = selected.length ? `${page * PAGE_SIZE + 1}–${Math.min((page + 1) * PAGE_SIZE, selected.length)} de ${number.format(selected.length)} investigaciones` : '0 investigaciones';
   $('previous').disabled = page === 0; $('next').disabled = (page + 1) * PAGE_SIZE >= selected.length;
 }
 function render() {
-  selected = TacnaData.filterRecords(records, $('year').value, $('level').value, $('search').value).sort((a, b) => b.anio - a.anio || a.titulo.localeCompare(b.titulo, 'es'));
+  selected = TacnaData.filterRecords(records, $('year').value, $('level').value, $('search').value, $('university').value).sort((a, b) => b.anio - a.anio || a.titulo.localeCompare(b.titulo, 'es'));
   const stats = TacnaData.stats(selected);
   ['total', 'applied', 'production'].forEach(key => $(key).textContent = number.format(stats[key]));
   $('rate').textContent = stats.rate.toLocaleString('es-PE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' %';
@@ -73,13 +74,23 @@ function render() {
 async function load() {
   $('retry').hidden = true; $('status').textContent = 'Consultando las investigaciones…';
   try {
-    const response = await fetch(CSV_URL, {cache: 'no-store', signal: AbortSignal.timeout(60000)});
+    const compressed = typeof DecompressionStream === 'function';
+    const response = await fetch(MODEL_URL.href + (compressed ? '.gz' : ''), {cache: 'no-store', signal: AbortSignal.timeout(60000)});
     if (!response.ok) throw new Error('HTTP ' + response.status);
-    const data = TacnaData.parseCSV(await response.text());
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    const json = compressed && bytes[0] === 31 && bytes[1] === 139
+      ? await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text()
+      : new TextDecoder().decode(bytes);
+    const model = JSON.parse(json);
+    const data = TacnaData.fromStar(model);
     if (!data.length) throw new Error('El dataset está vacío.');
     records = data; loaded = true;
     $('year').replaceChildren(new Option('Todos los años', ''));
-    [...new Set(records.map(r => r.anio))].sort((a, b) => b - a).forEach(year => $('year').add(new Option(year, year)));
+    [...new Set(records.map(r => r.anio).filter(Boolean))].sort((a, b) => b - a).forEach(year => $('year').add(new Option(year, year)));
+    if (records.some(r => r.anio === null)) $('year').add(new Option('Sin a?o conocido', 'desconocido'));
+    $('university').replaceChildren(new Option('Todas las universidades', ''));
+    [...new Set(records.map(r => r.universidad))].sort().forEach(u => $('university').add(new Option(u, u)));
+    $('coverage').textContent = model.cobertura.map(c => c.universidad + ': ' + (c.alcance.includes('historica') ? 'selección histórica disponible' : 'catálogo recolectado')).join(' · ');
     render();
   } catch (error) {
     $('status').textContent = 'No pudimos descargar los datos. Comprueba tu conexión e intenta de nuevo. No se muestran cifras sin verificar.';

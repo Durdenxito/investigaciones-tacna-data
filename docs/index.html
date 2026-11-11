@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
+  <meta name="datos-base" content="https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explora investigaciones de la UNJBG que mencionan Tacna. Indicadores, evolución anual y acceso a los documentos originales.">
+  <meta name="description" content="Explora investigaciones de UNJBG y UPT que mencionan Tacna. Indicadores, evolución anual y acceso a los documentos originales.">
   <title>Investigaciones sobre Tacna</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23193b38'/%3E%3Ctext x='16' y='23' text-anchor='middle' fill='white' font-family='sans-serif' font-size='24'%3ET%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
@@ -18,18 +19,20 @@
   </header>
   <main id="contenido">
     <section class="intro">
-      <p class="eyebrow">INVESTIGACIÓN · UNJBG · ACCESO ABIERTO</p>
+      <p class="eyebrow">INVESTIGACIÓN · UNJBG Y UPT · ACCESO ABIERTO</p>
       <h1>Una mirada a la investigación<br><span>que menciona Tacna.</span></h1>
       <p class="lede">Explora las publicaciones, sigue su evolución y encuentra los estudios detrás de los números.</p>
-      <p class="scope">Fuente: repositorio académico de la UNJBG. Selección por la palabra Tacna en título, resumen o materias.</p>
+      <p class="scope">Fuentes: repositorios académicos de UNJBG y UPT. Selección por la palabra Tacna en título, resumen o materias.</p>
     </section>
     <nav class="pages" aria-label="Páginas del informe">
       <button type="button" id="nav-panorama" aria-pressed="true">01 <span>Panorama</span></button>
       <button type="button" id="nav-explorar" aria-pressed="false">02 <span>Explorar investigaciones</span></button>
     </nav>
+    <p id="coverage" class="scope" aria-live="polite"></p>
     <form class="filters" id="filters">
+      <label>Universidad<select id="university"><option value="">Todas las universidades</option></select></label>
       <label>Año de publicación<select id="year"><option value="">Todos los años</option></select></label>
-      <label>Madurez estimada<select id="level"><option value="">Todos los niveles</option><option value="Teorico">Teórico</option><option value="Prototipo / Piloto">Prototipo / Piloto</option><option value="En Produccion">En producción</option></select></label>
+      <label>Madurez estimada<select id="level"><option value="">Todos los niveles</option><option value="sin_evidencia">Sin evidencia textual detectada</option><option value="piloto">Indicios de prototipo / piloto</option><option value="produccion">Indicios de producción</option><option value="sin_resumen">Resumen no disponible</option></select></label>
       <label class="search-label">Buscar un estudio<input id="search" type="search" placeholder="Título, autor o tema…"></label>
       <button type="reset" class="reset">Limpiar filtros</button>
     </form>
@@ -54,7 +57,7 @@
       <div class="table-wrap"><table><caption class="visually-hidden">Investigaciones filtradas, ordenadas por año descendente</caption><thead><tr><th scope="col">Investigación y autores</th><th scope="col">Año</th><th scope="col">Materias</th><th scope="col">Madurez estimada</th><th scope="col">Documento</th></tr></thead><tbody id="rows"></tbody></table></div>
       <div class="pagination"><p id="page-info" aria-live="polite"></p><div><button id="previous" type="button">← Anterior</button><button id="next" type="button">Siguiente →</button></div></div>
     </section>
-    <footer><p>Investigaciones sobre Tacna · Fuente académica: <a href="https://repositorio.unjbg.edu.pe/" target="_blank" rel="noopener noreferrer">UNJBG ↗</a></p><p>Datos actualizados semanalmente mediante GitHub Actions. <a id="download" href="https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/investigaciones_tacna.csv">Descargar CSV ↗</a></p></footer>
+    <footer><p>Investigaciones sobre Tacna · Fuentes académicas: <a href="https://repositorio.unjbg.edu.pe/" target="_blank" rel="noopener noreferrer">UNJBG ↗</a> y <a href="https://repositorio.upt.edu.pe/" target="_blank" rel="noopener noreferrer">UPT ↗</a></p><p>Actualización programada semanalmente. <a id="download" href="https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/investigaciones_tacna.csv">Descargar CSV ↗</a></p></footer>
   </main>
 </body>
 </html>

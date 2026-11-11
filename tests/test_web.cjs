@@ -1,4 +1,4 @@
-﻿const assert = require('node:assert/strict');
+const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const data = require('../docs/core.js');
 const header = 'titulo,autores,anio,abstract,enlace,materias,universidad,nivel_madurez';
@@ -20,3 +20,14 @@ assert.ok(records.length > 0);
 assert.ok(records.every(r => /\btacna\b/i.test([r.titulo, r.abstract, r.materias].join(' '))));
 console.log('OK: parser CSV real, filtros, indicadores, resultados vacíos y enlaces seguros.');
 
+const model = JSON.parse(fs.readFileSync('data/modelo_web.json', 'utf8'));
+const hydrated = data.fromStar(model);
+assert.equal(hydrated.length, model.hechos.length);
+assert.equal(new Set(hydrated.map(r => r.registro_id)).size, hydrated.length);
+assert.ok(data.filterRecords(hydrated, '', '', '', 'UPT').length > 0);
+assert.ok(data.filterRecords(hydrated, '', '', '', 'UNJBG').length > 0);
+assert.equal(data.stats([{madurez_id:'sin_resumen'}, {madurez_id:'sin_evidencia'}]).applied, 0);
+const bad = {...model, hechos: model.hechos.map((r,i) => i ? r : {...r, universidad_id:'inexistente'})};
+assert.throws(() => data.fromStar(bad));
+assert.throws(() => data.fromStar({...model, registro_autor:[...model.registro_autor, model.registro_autor[0]]}));
+console.log('OK: estrella, puentes, grano, universidad, nulos y referencias invalidas.');

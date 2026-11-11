@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-11T07:46:31.611022+00:00",
+  "version_reglas": "2.0",
+  "registros": 9312,
+  "seleccion_tacna": 7683,
+  "cobertura": [
+    {
+      "universidad": "UNJBG",
+      "registros": 4016,
+      "alcance": "captura_historica_filtrada_tacna",
+      "nota": "Fuente en vivo HTTP 502; no se afirma catalogo completo."
+    },
+    {
+      "universidad": "UPT",
+      "registros": 5296,
+      "alcance": "catalogo_completo_captura",
+      "capturada_en": "2026-11-11T06:37:44Z"
+    }
+  ],
+  "por_universidad": {
+    "UNJBG": 4016,
+    "UPT": 5296
+  },
+  "tacna_por_universidad": {
+    "UNJBG": 4016,
+    "UPT": 3667
+  },
+  "madurez_tacna": {
+    "sin_evidencia": 7615,
+    "piloto": 54,
+    "produccion": 14,
+    "sin_resumen": 0
+  },
+  "tablas": {
+    "dim_universidad": {
+      "filas": 2,
+      "columnas": [
+        "universidad_id",
+        "sigla",
+        "nombre"
+      ]
+    },
+    "repositorio": {
+      "filas": 2,
+      "columnas": [
+        "repositorio_id",
+        "universidad_id",
+        "url"
+      ]
+    },
+    "dim_anio": {
+      "filas": 24,
+      "columnas": [
+        "anio_id",
+        "nombre"
+      ]
+    },
+    "dim_madurez": {
+      "filas": 4,
+      "columnas": [
+        "madurez_id",
+        "nombre",
+        "orden"
+      ]
+    },
+    "dim_registro": {
+      "filas": 9312,
+      "columnas": [
+        "registro_id",
+        "handle",
+        "repositorio_id",
+        "titulo",
+        "abstract",
+        "enlace",
+        "fecha_original",
+        "fecha_publicacion",
+        "anio_id",
+        "precision_fecha",
+        "estado_fecha",
+        "fecha_ingreso_repositorio",
+        "fecha_extraccion",
+        "metodo",
+        "fuente",
+        "madurez_id",
+        "regla",
+        "evidencia",
+        "version_reglas",
+        "fecha_clasificacion"
+      ]
+    },
+    "fact_registro": {
+      "filas": 9312,
+      "columnas": [
+        "registro_id",
+        "universidad_id",
+        "anio_id",
+        "madurez_id",
+        "menciona_tacna",
+        "coincide_titulo",
+        "coincide_resumen",
+        "coincide_materias"
+      ]
+    },
+    "dim_autor": {
+      "filas": 10100,
+      "columnas": [
+        "autor_id",
+        "nombre",
+        "nombre_normalizado",
+        "orcid"
+      ]
+    },
+    "dim_materia": {
+      "filas": 15504,
+      "columnas": [
+        "materia_id",
+        "nombre",
+        "esquema",
+        "codigo"
+      ]
+    },
+    "puente_registro_autor": {
+      "filas": 10100,
+      "columnas": [
+        "registro_id",
+        "autor_id",
+        "orden"
+      ]
+    },
+    "puente_registro_materia": {
+      "filas": 44485,
+      "columnas": [
+        "registro_id",
+        "materia_id"
+      ]
+    }
+  },
+  "fechas_normalizadas": 1,
+  "fechas_desconocidas": 0
+}

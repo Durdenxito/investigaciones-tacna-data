@@ -3,6 +3,11 @@
     {
       "name": "UNJBG",
       "url": "https://repositorio.unjbg.edu.pe/server/oai/request?verb=ListRecords&metadataPrefix=oai_dc"
+    },
+    {
+      "name": "UPT",
+      "url": "https://repositorio.upt.edu.pe/oai/request?verb=ListRecords&metadataPrefix=oai_dc",
+      "completar_html": true
     }
   ],
   "oaipmh_output_dir": "data"

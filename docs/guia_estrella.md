@@ -4,7 +4,11 @@ Los CSV de `data/estrella/` y `data/modelo_web.json` se generan juntos. El catá
 
 ## Web
 
-La web valida claves y puentes y reconstruye una fila por hecho. Universidad, año, madurez y búsqueda filtran esa selección. Los resúmenes completos siguen disponibles. El sitio nuevo utiliza JSON, no el CSV antiguo.
+La web valida claves y puentes y reconstruye una fila por hecho. Contiene seis reportes: panorama, evolución temporal, universidades, madurez, temas y catálogo. Universidad, año, mes, día, madurez y búsqueda filtran la misma selección en todos los reportes. Los resúmenes completos siguen disponibles. El sitio nuevo utiliza JSON, no el CSV antiguo.
+
+Seleccionar un año habilita los meses con datos; seleccionar un mes habilita sus días conocidos. Cambiar el año borra mes/día y cambiar el mes borra el día. Un registro que solo tiene año participa en ese año, pero no en un mes o día inventado. La interfaz informa precisión y exclusiones. La captura histórica UNJBG solo conserva año; la selección web actual tiene 2515 fechas completas, una con precisión de mes y 5167 con solo año.
+
+Evolución temporal agrupa por año, mes o día: el gráfico muestra hasta los últimos 60 periodos observados y la tabla todos los periodos. Temas cuenta una investigación por palabra clave, conserva las asociaciones originales y excluye URI OCDE; muestra un top 10 en el gráfico y top 20 en la tabla. El catálogo pagina de 25 en 25 y muestra la precisión real de la fecha. Los conteos y porcentajes se calculan sobre la selección filtrada; varias materias no multiplican los registros.
 
 Los navegadores con DecompressionStream descargan `modelo_web.json.gz`; el resto usa JSON sin compresión. La estrella y los resúmenes son idénticos en ambas variantes. La compresión reduce transferencia sin eliminar búsqueda en el resumen.
 

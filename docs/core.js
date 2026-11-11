@@ -29,9 +29,64 @@
     });
   }
   const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  function filterRecords(records, year, level, search, university = '') {
+  function publicationDate(record) {
+    const year = Number(record.anio) || null;
+    const match = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(record.fecha_publicacion || '');
+    const empty = {year, month: null, day: null};
+    if (!match || Number(match[1]) !== year) return empty;
+    const precision = record.precision_fecha || (match[3] ? 'dia' : match[2] ? 'mes' : 'anio');
+    if (!['mes', 'dia'].includes(precision) || !match[2]) return empty;
+    const month = Number(match[2]), day = match[3] ? Number(match[3]) : null;
+    const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (month < 1 || month > 12 || (day !== null && (day < 1 || day > days[month - 1])) || (precision === 'dia' && day === null)) return empty;
+    return {year, month, day: precision === 'dia' ? day : null};
+  }
+  function filterRecords(records, year, level, search, university = '', month = '', day = '') {
     const term = normalize(search.trim());
-    return records.filter(r => (!year || (year === 'desconocido' ? r.anio === null : r.anio === Number(year))) && (!level || (r.madurez_id || r.nivel_madurez) === level) && (!university || r.universidad === university) && (!term || normalize([r.titulo, r.autores, r.materias, r.abstract].join(' ')).includes(term)));
+    return records.filter(r => {
+      if (year && (year === 'desconocido' ? r.anio !== null : r.anio !== Number(year))) return false;
+      if (month || day) {
+        const date = publicationDate(r);
+        if ((month && date.month !== Number(month)) || (day && date.day !== Number(day))) return false;
+      }
+      return (!level || (r.madurez_id || r.nivel_madurez) === level) && (!university || r.universidad === university) && (!term || normalize([r.titulo, r.autores, r.materias, r.abstract].join(' ')).includes(term));
+    });
+  }
+  function countBy(records, key) {
+    const counts = new Map();
+    for (const record of records) {
+      const label = record[key] ?? 'Sin dato';
+      counts.set(label, (counts.get(label) || 0) + 1);
+    }
+    return [...counts].map(([label, count]) => ({label, count})).sort((a,b) => b.count - a.count || String(a.label).localeCompare(String(b.label), 'es'));
+  }
+  function timeSeries(records, unit = 'anio') {
+    if (!['anio', 'mes', 'dia'].includes(unit)) throw new Error('Periodo de tiempo invalido.');
+    const counts = new Map();
+    let omitted = 0;
+    const pad = value => String(value).padStart(2, '0');
+    for (const record of records) {
+      const date = publicationDate(record);
+      if (!date.year || (unit !== 'anio' && !date.month) || (unit === 'dia' && !date.day)) { omitted++; continue; }
+      const key = String(date.year) + (unit !== 'anio' ? '-' + pad(date.month) : '') + (unit === 'dia' ? '-' + pad(date.day) : '');
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    return {rows: [...counts].sort((a,b) => a[0].localeCompare(b[0])).map(([label,count]) => ({label,count})), omitted};
+  }
+  function subjectRanking(records) {
+    const counts = new Map();
+    for (const record of records) {
+      const seen = new Set();
+      for (const value of record.materias_lista || String(record.materias || '').split(';')) {
+        const label = value.trim(), key = label.toLocaleLowerCase('es');
+        if (!key || /purl\.org\/pe-repo\/ocde\/ford#/i.test(label) || seen.has(key)) continue;
+        seen.add(key);
+        if (!counts.has(key)) counts.set(key, {label, count: 0});
+        counts.get(key).count++;
+      }
+    }
+    return [...counts.values()].sort((a,b) => b.count - a.count || a.label.localeCompare(b.label, 'es'));
   }
   function stats(records) {
     const production = records.filter(r => r.madurez_id === 'produccion' || r.nivel_madurez === 'En Produccion').length;
@@ -64,6 +119,7 @@
       for (const row of rows) {
         const pair = row.registro_id + ':' + row[key];
         if (!facts.has(row.registro_id) || !dimension.has(row[key]) || pairs.has(pair)) throw new Error('Relacion invalida: ' + table);
+        if (typeof dimension.get(row[key]).nombre !== 'string') throw new Error('Nombre invalido: ' + table);
         pairs.add(pair);
         if (!result.has(row.registro_id)) result.set(row.registro_id, []);
         result.get(row.registro_id).push(dimension.get(row[key]).nombre);
@@ -76,10 +132,11 @@
       const r = catalog.get(fact.registro_id), u = universities.get(fact.universidad_id), m = levels.get(fact.madurez_id);
       if (!r || !u || !m || !years.has(fact.anio_id) || typeof r.titulo !== 'string' || typeof r.abstract !== 'string' || fact.menciona_tacna !== true) throw new Error('Registro o dimension invalida.');
       return {...r, anio: fact.anio_id || null, universidad: u.sigla, madurez_id: fact.madurez_id,
-        nivel_madurez: m.nombre, autores: (authorNames.get(r.registro_id) || []).join('; '), materias: (subjectNames.get(r.registro_id) || []).join('; ')};
+        nivel_madurez: m.nombre, autores: (authorNames.get(r.registro_id) || []).join('; '),
+        materias_lista: subjectNames.get(r.registro_id) || [], materias: (subjectNames.get(r.registro_id) || []).join('; ')};
     });
   }
-  const api = {parseCSV, fromStar, filterRecords, stats, safeLink};
+  const api = {parseCSV, fromStar, filterRecords, stats, safeLink, publicationDate, countBy, timeSeries, subjectRanking};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TacnaData = api;
 })(globalThis);

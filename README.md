@@ -1,6 +1,8 @@
 # Investigaciones sobre Tacna: UNJBG y UPT
 
-El sitio de GitHub Pages consume una estrella JSON validada y muestra una fila por registro, con filtros de universidad, año y señales textuales. Los metadatos originales son de los repositorios universitarios; no se descargan PDF.
+El sitio de GitHub Pages consume una estrella JSON validada y muestra una fila por registro. Incluye seis reportes: panorama, evolución temporal, universidades, madurez, temas y catálogo. Comparten filtros de universidad, año, mes, día, señales textuales y búsqueda. Los metadatos originales son de los repositorios universitarios; no se descargan PDF.
+
+Mes se habilita al elegir año y día al elegir mes, usando únicamente fechas con esa precisión. Las fechas parciales no se completan artificialmente. El reporte temporal informa cuántos registros quedan fuera por falta de detalle. La captura histórica UNJBG solo conserva año.
 
 - Sitio: https://durdenxito.github.io/investigaciones-tacna-data/
 - Web: docs/.

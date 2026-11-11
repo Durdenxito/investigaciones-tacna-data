@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 import requests
 
 OAI = 'http://www.openarchives.org/OAI/2.0/'
-DC = 'http://purl.org/dc/elements/1.1/'
+DC = 'http://purl.org/dc/elements/1.1/'  # NOSONAR: identificador XML normativo Dublin Core; no es una conexion HTTP.
 
 
 def parse_oai(content, name, url):

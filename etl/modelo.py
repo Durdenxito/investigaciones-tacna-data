@@ -219,7 +219,8 @@ def publicar(model, output, raw=None):
         stage = Path(temp)
         (stage / 'estrella').mkdir()
         if raw is not None:
-            (stage / 'origen.json').write_text(json.dumps({'registros': raw, 'cobertura': model['cobertura']}, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+            with (stage / 'origen.json').open('w', encoding='utf-8') as stream:
+                json.dump({'registros': raw, 'cobertura': model['cobertura']}, stream, ensure_ascii=False, separators=(',', ':'))
         for table, filename in TABLE_FILES.items():
             rows = model[table]
             if not rows and table not in EMPTY_ROWS:
@@ -228,7 +229,8 @@ def publicar(model, output, raw=None):
                 writer = csv.DictWriter(stream, fieldnames=list(rows[0] if rows else EMPTY_ROWS[table]))
                 writer.writeheader()
                 writer.writerows(rows)
-        (stage / 'modelo_web.json').write_text(json.dumps(web, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+        with (stage / 'modelo_web.json').open('w', encoding='utf-8') as stream:
+            json.dump(web, stream, ensure_ascii=False, separators=(',', ':'))
         (stage / 'modelo_web.json.gz').write_bytes(gzip.compress((stage / 'modelo_web.json').read_bytes(), compresslevel=6, mtime=0))
         with closing(sqlite3.connect(stage / 'catalogo.sqlite')) as conn:
             conn.execute('PRAGMA foreign_keys=ON')
@@ -276,7 +278,8 @@ def publicar(model, output, raw=None):
             'tablas': {TABLE_FILES[k]: {'filas':len(model[k]),'columnas':list(model[k][0] if model[k] else EMPTY_ROWS[k])} for k in TABLE_FILES},
             'fechas_normalizadas': sum(r['estado_fecha']=='normalizada' for r in model['registros']),
             'fechas_desconocidas': sum(r['anio_id']==0 for r in model['registros'])}
-        (stage / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+        with (stage / 'manifest.json').open('w', encoding='utf-8') as stream:
+            json.dump(manifest, stream, ensure_ascii=False, indent=2)
         for path in sorted(stage.rglob('*')):
             if path.is_file() and path.name != 'manifest.json':
                 target = output / path.relative_to(stage)

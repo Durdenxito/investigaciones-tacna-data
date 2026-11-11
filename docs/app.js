@@ -1,5 +1,7 @@
 'use strict';
-const MODEL_URL = new URL('modelo_web.json', new URL(document.querySelector('meta[name=datos-base]').content, location.href));
+const PUBLIC_MODEL = 'https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/modelo_web.json';
+const LOCAL_MODEL = '/data/modelo_web.json';
+const localPreview = ['localhost', '127.0.0.1'].includes(location.hostname);
 const $ = id => document.getElementById(id);
 const number = new Intl.NumberFormat('es-PE');
 const labels = {sin_evidencia: 'Sin evidencia textual detectada', piloto: 'Indicios de prototipo / piloto', produccion: 'Indicios de producción', sin_resumen: 'Resumen no disponible'};
@@ -75,7 +77,8 @@ async function load() {
   $('retry').hidden = true; $('status').textContent = 'Consultando las investigaciones…';
   try {
     const compressed = typeof DecompressionStream === 'function';
-    const response = await fetch(MODEL_URL.href + (compressed ? '.gz' : ''), {cache: 'no-store', signal: AbortSignal.timeout(60000)});
+    const modelURL = localPreview ? LOCAL_MODEL : PUBLIC_MODEL;
+    const response = await fetch(modelURL + (compressed ? '.gz' : ''), {cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(60000)});
     if (!response.ok) throw new Error('HTTP ' + response.status);
     const bytes = new Uint8Array(await response.arrayBuffer());
     const json = compressed && bytes[0] === 31 && bytes[1] === 139
@@ -89,7 +92,7 @@ async function load() {
     [...new Set(records.map(r => r.anio).filter(Boolean))].sort((a, b) => b - a).forEach(year => $('year').add(new Option(year, year)));
     if (records.some(r => r.anio === null)) $('year').add(new Option('Sin a?o conocido', 'desconocido'));
     $('university').replaceChildren(new Option('Todas las universidades', ''));
-    [...new Set(records.map(r => r.universidad))].sort().forEach(u => $('university').add(new Option(u, u)));
+    [...new Set(records.map(r => r.universidad))].sort((a,b) => a.localeCompare(b, 'es')).forEach(u => $('university').add(new Option(u, u)));
     $('coverage').textContent = model.cobertura.map(c => c.universidad + ': ' + (c.alcance.includes('historica') ? 'selección histórica disponible' : 'catálogo recolectado')).join(' · ');
     render();
   } catch (error) {

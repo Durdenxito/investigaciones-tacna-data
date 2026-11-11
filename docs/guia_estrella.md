@@ -8,7 +8,7 @@ La web valida claves y puentes y reconstruye una fila por hecho. Universidad, a�
 
 Los navegadores con DecompressionStream descargan `modelo_web.json.gz`; el resto usa JSON sin compresión. La estrella y los resúmenes son idénticos en ambas variantes. La compresión reduce transferencia sin eliminar búsqueda en el resumen.
 
-En desarrollo: `python -m http.server 8765 --bind 127.0.0.1`, abrir `/docs/`. El metadato `datos-base` apunta a `../data/`. En el repositorio público, `docs/` contiene el sitio y ese metadato apunta al origen Raw público.
+En desarrollo: `python -m http.server 8765 --bind 127.0.0.1` desde la raíz del proyecto, abrir `/docs/`. En localhost se consulta `/data/`. En producción se usa la URL Raw pública fija. No se aceptan orígenes de datos proporcionados por formularios ni por metadatos del documento. En el repositorio público, `docs/` contiene el sitio.
 
 ## Importar la estrella en Power BI Desktop
 

@@ -10,6 +10,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'etl'))
 from modelo import construir, publicar, fecha_publicacion, clasificar
 from fuentes import ficha, completar_upt
+from main_oaipmh import ruta_captura
 
 
 def registro(number=1, **values):
@@ -20,6 +21,12 @@ def registro(number=1, **values):
 
 
 class ModeloTest(unittest.TestCase):
+    def test_captura_fuera_de_data_es_rechazada(self):
+        root = Path(__file__).resolve().parents[1]
+        with self.assertRaises(ValueError):
+            ruta_captura(root / 'data/../../fuera.json', root)
+        self.assertEqual(ruta_captura(root / 'data/origen.json', root), root / 'data/origen.json')
+
     def test_grano_puentes_y_homonimos(self):
         model = construir([registro(), registro(2)])
         self.assertEqual(len(model['hechos']), 2)

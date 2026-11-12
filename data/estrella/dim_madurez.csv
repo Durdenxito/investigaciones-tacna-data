@@ -1,0 +1,5 @@
+madurez_id,nombre,orden
+sin_evidencia,Sin evidencia textual detectada,0
+piloto,Indicios de prototipo / piloto,1
+produccion,Indicios de producción,2
+sin_resumen,Resumen no disponible,3

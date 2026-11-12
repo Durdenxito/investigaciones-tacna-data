@@ -1,0 +1,10 @@
+// Modelo nuevo: no sustituye automaticamente las medidas dentro del PBIX heredado.
+Total_Registros = DISTINCTCOUNT(fact_registro[registro_id])
+
+Registros_Tacna = CALCULATE([Total_Registros], fact_registro[menciona_tacna] = TRUE())
+
+Con_Indicios = CALCULATE([Registros_Tacna], dim_madurez[madurez_id] IN {"piloto", "produccion"})
+
+Porcentaje_Con_Indicios = DIVIDE([Con_Indicios], [Registros_Tacna], 0)
+
+Indicios_Produccion = CALCULATE([Registros_Tacna], dim_madurez[madurez_id] = "produccion")

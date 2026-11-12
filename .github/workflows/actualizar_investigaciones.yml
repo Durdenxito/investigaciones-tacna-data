@@ -7,6 +7,7 @@ on:
       - 'etl/**'
       - 'tests/**'
       - 'requirements.txt'
+      - 'requirements.lock.txt'
       - '.github/workflows/actualizar_investigaciones.yml'
   schedule:
     - cron: '17 5 * * 0'
@@ -20,7 +21,7 @@ jobs:
   etl-oaipmh:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     permissions:
       contents: write
     steps:
@@ -34,7 +35,8 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --only-binary=:all: --require-hashes -r requirements.lock.txt
 
       - name: Test ETL
         run: python -m unittest discover -s tests -v
@@ -42,12 +44,19 @@ jobs:
       - name: Run OAI-PMH ETL
         run: python etl/main_oaipmh.py
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validar modelo web publicado
+        run: node tests/test_web.cjs
+
 
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/investigaciones_tacna.csv
+          git add data/investigaciones_tacna.csv data/estrella data/modelo_web.json data/modelo_web.json.gz data/manifest.json data/origen.json
           if git diff --staged --quiet; then
             echo "Sin cambios en las investigaciones."
             exit 0

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explora investigaciones de la UNJBG que mencionan Tacna. Indicadores, evolución anual y acceso a los documentos originales.">
+  <meta name="description" content="Seis reportes de investigaciones UNJBG y UPT sobre Tacna, con filtros de universidad, año, mes y día.">
   <title>Investigaciones sobre Tacna</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23193b38'/%3E%3Ctext x='16' y='23' text-anchor='middle' fill='white' font-family='sans-serif' font-size='24'%3ET%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
@@ -11,50 +11,100 @@
   <script src="app.js" defer></script>
 </head>
 <body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <symbol id="i-mark" viewBox="0 0 24 24"><path d="M3 18V5c4-1 6 0 9 2 3-2 5-3 9-2v13c-4-1-6 0-9 2-3-2-5-3-9-2Z M12 7v13 M6 13l3-3 3 2 4-4 2 2"/></symbol>
+    <symbol id="i-overview" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 21v-4m3.5 4v-7m3.5 7v-5"/></symbol>
+    <symbol id="i-time" viewBox="0 0 24 24"><path d="M3 3v18h18 M6 15l5-6 4 3 6-7 M17 5h4v4"/></symbol>
+    <symbol id="i-campus" viewBox="0 0 24 24"><path d="m2 8 10-5 10 5H2Zm2 3v7m5-7v7m6-7v7m5-7v7M2 21h20"/></symbol>
+    <symbol id="i-application" viewBox="0 0 24 24"><path d="M9 3h6 M10 3v6L4 19a1.3 1.3 0 0 0 1 2h14a1.3 1.3 0 0 0 1-2L14 9V3 M7 15h10 M10 18h.01m4 0h.01"/></symbol>
+    <symbol id="i-topics" viewBox="0 0 24 24"><path d="M3 4h8l10 10-8 8L3 12V4Z"/><circle cx="7.5" cy="8.5" r="1"/><path d="m13 4 8 8"/></symbol>
+    <symbol id="i-catalog" viewBox="0 0 24 24"><path d="M4 3h11v18H4z M8 7h3m-3 4h3 M18 4l3 16"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8 M4 4v6h6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 3h7v7m0-7L10 14 M10 5H4v16h16v-6"/></symbol>
+    <symbol id="i-ratio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 16 8-8 M8 8h.01m8 8h.01"/></symbol>
+  </svg>
   <a class="skip" href="#contenido">Ir al contenido</a>
   <header class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">T</span><span>TACNA<span class="brand-sub">EXPLORADOR ACADÉMICO</span></span></div>
-    <a class="source-link" href="https://github.com/Durdenxito/investigaciones-tacna-data" target="_blank" rel="noopener noreferrer">Datos abiertos ↗</a>
+    <div class="brand"><span class="brand-mark"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-mark"/></svg></span><span>Tacna</span></div>
+    <a class="source-link" href="https://github.com/Durdenxito/investigaciones-tacna-data" target="_blank" rel="noopener noreferrer">Datos abiertos<svg class="icon" aria-hidden="true" focusable="false"><use href="#i-external"/></svg></a>
   </header>
   <main id="contenido">
     <section class="intro">
-      <p class="eyebrow">INVESTIGACIÓN · UNJBG · ACCESO ABIERTO</p>
-      <h1>Una mirada a la investigación<br><span>que menciona Tacna.</span></h1>
-      <p class="lede">Explora las publicaciones, sigue su evolución y encuentra los estudios detrás de los números.</p>
-      <p class="scope">Fuente: repositorio académico de la UNJBG. Selección por la palabra Tacna en título, resumen o materias.</p>
+      <h1>Investigación en Tacna</h1>
+      <div class="source-chips" aria-label="Repositorios incluidos"><span>UNJBG</span><span>UPT</span></div>
     </section>
     <nav class="pages" aria-label="Páginas del informe">
-      <button type="button" id="nav-panorama" aria-pressed="true">01 <span>Panorama</span></button>
-      <button type="button" id="nav-explorar" aria-pressed="false">02 <span>Explorar investigaciones</span></button>
+      <button type="button" id="nav-panorama" aria-pressed="true"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-overview"/></svg><span>Panorama</span></button>
+      <button type="button" id="nav-tiempo" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-time"/></svg><span>Evolución</span></button>
+      <button type="button" id="nav-universidades" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-campus"/></svg><span>Universidades</span></button>
+      <button type="button" id="nav-madurez" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-application"/></svg><span>Aplicación</span></button>
+      <button type="button" id="nav-temas" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-topics"/></svg><span>Temas</span></button>
+      <button type="button" id="nav-explorar" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-catalog"/></svg><span>Catálogo</span></button>
     </nav>
-    <form class="filters" id="filters">
-      <label>Año de publicación<select id="year"><option value="">Todos los años</option></select></label>
-      <label>Madurez estimada<select id="level"><option value="">Todos los niveles</option><option value="Teorico">Teórico</option><option value="Prototipo / Piloto">Prototipo / Piloto</option><option value="En Produccion">En producción</option></select></label>
-      <label class="search-label">Buscar un estudio<input id="search" type="search" placeholder="Título, autor o tema…"></label>
-      <button type="reset" class="reset">Limpiar filtros</button>
+    <form class="filters" id="filters" aria-label="Filtrar investigaciones">
+      <label>Universidad<select id="university"><option value="">Todas las universidades</option></select></label>
+      <label>Año<select id="year"><option value="">Todos los años</option></select></label>
+      <label>Mes<select id="month" title="Selecciona un año con meses disponibles" disabled><option value="">Todos los meses</option></select></label>
+      <label>Día<select id="day" title="Selecciona un mes con días disponibles" disabled><option value="">Todos los días</option></select></label>
+      <label>Madurez estimada<select id="level"><option value="">Todos los niveles</option><option value="sin_evidencia">Sin evidencia textual detectada</option><option value="piloto">Indicios de prototipo / piloto</option><option value="produccion">Indicios de producción</option><option value="sin_resumen">Resumen no disponible</option></select></label>
+      <label class="search-label"><span class="visually-hidden">Buscar un estudio</span><span class="search-field"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-search"/></svg><input id="search" type="search" placeholder="Buscar por título, autor o tema…"></span></label>
+      <button type="reset" class="reset"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-reset"/></svg>Limpiar filtros</button>
     </form>
-    <p id="status" role="status" aria-live="polite">Consultando las investigaciones…</p>
+    <div class="results-meta">
+      <p id="status" role="status" aria-live="polite">Consultando las investigaciones…</p>
+      <details class="data-info"><summary>Sobre los datos</summary><div class="data-info-content"><p>Selección por la palabra Tacna en título, resumen o materias. La mención no certifica el lugar de ejecución ni representa toda la producción regional.</p><p id="coverage" class="scope"></p><p id="time-coverage" class="scope date-note"></p></div></details>
+    </div>
     <button id="retry" type="button" hidden>Reintentar descarga</button>
-    <section id="panorama" aria-labelledby="panorama-title" hidden>
+    <section id="panorama" data-report aria-labelledby="panorama-title" hidden>
       <h2 id="panorama-title" class="visually-hidden">Panorama de investigaciones</h2>
       <div class="metrics">
-        <article class="metric"><p>Investigaciones</p><strong id="total">—</strong><span>Registros en la selección</span></article>
-        <article class="metric"><p>Señales de aplicación</p><strong id="applied">—</strong><span>Prototipo, piloto o producción</span></article>
-        <article class="metric"><p>Porcentaje con señales</p><strong id="rate">—</strong><span>Sobre las investigaciones filtradas</span></article>
-        <article class="metric"><p>Señales de producción</p><strong id="production">—</strong><span>Para contrastar con el documento</span></article>
+        <article class="metric"><div class="metric-heading"><p>Investigaciones</p><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-catalog"/></svg></div><strong id="total">—</strong></article>
+        <article class="metric"><div class="metric-heading"><p>Señales de aplicación</p><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-application"/></svg></div><strong id="applied">—</strong></article>
+        <article class="metric"><div class="metric-heading"><p>Proporción con señales</p><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-ratio"/></svg></div><strong id="rate">—</strong></article>
+        <article class="metric"><div class="metric-heading"><p>Señales de producción</p><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-time"/></svg></div><strong id="production">—</strong></article>
       </div>
       <div class="charts">
-        <article class="panel year-panel"><div class="panel-heading"><div><p class="eyebrow">EVOLUCIÓN</p><h2>Investigaciones por año</h2></div><span>Publicaciones</span></div><div id="years-chart" class="year-chart" role="list" aria-label="Cantidad de investigaciones por año"></div><p class="chart-note">El año en curso está incompleto. Los datos representan esta fuente, no toda la producción científica regional.</p></article>
-        <article class="panel"><div class="panel-heading"><div><p class="eyebrow">APLICACIÓN POTENCIAL</p><h2>Madurez estimada</h2></div></div><div id="levels-chart" class="level-chart" role="list" aria-label="Cantidad por nivel de madurez"></div><p class="chart-note">Clasificación por palabras del resumen. Una señal no acredita que el trabajo esté implementado.</p></article>
+        <article class="panel year-panel"><div class="panel-heading"><h2>Publicaciones por año</h2><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-time"/></svg></div><div id="years-chart" class="year-chart" role="list" aria-label="Cantidad de investigaciones por año"></div><p class="chart-note">El año en curso está incompleto.</p></article>
+        <article class="panel"><div class="panel-heading"><h2>Señales de aplicación</h2><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-application"/></svg></div><div id="levels-chart" class="level-chart" role="list" aria-label="Cantidad por nivel de madurez"></div><p class="chart-note">Indicios en el resumen; no acreditan una implementación.</p></article>
       </div>
-      <aside class="notice"><strong>Los números son un punto de partida.</strong> Consulta el estudio original para conocer su alcance, metodología y resultados. La mención de Tacna no certifica el lugar de ejecución.</aside>
     </section>
-    <section id="explorar" aria-labelledby="explorar-title" hidden>
-      <div class="table-heading"><div><p class="eyebrow">DEL INDICADOR AL DOCUMENTO</p><h2 id="explorar-title">Explora los estudios</h2></div><p><strong id="results">0</strong> resultados</p></div>
-      <div class="table-wrap"><table><caption class="visually-hidden">Investigaciones filtradas, ordenadas por año descendente</caption><thead><tr><th scope="col">Investigación y autores</th><th scope="col">Año</th><th scope="col">Materias</th><th scope="col">Madurez estimada</th><th scope="col">Documento</th></tr></thead><tbody id="rows"></tbody></table></div>
+    <section id="tiempo" data-report aria-labelledby="tiempo-title" hidden>
+      <div class="table-heading"><h2 id="tiempo-title">Evolución temporal</h2><label class="grouping">Agrupar por<select id="time-unit"><option value="anio">Año</option><option value="mes">Mes</option><option value="dia">Día</option></select></label></div>
+      <article class="panel">
+        <p id="time-note" class="scope"></p>
+        <div id="time-chart" class="year-chart" role="list" aria-label="Investigaciones por periodo de publicación"></div>
+        <details><summary>Ver tabla de todos los periodos</summary><div class="table-wrap report-table-wrap"><table class="summary-table"><caption>Registros por periodo de publicación</caption><thead><tr><th scope="col">Periodo</th><th scope="col">Investigaciones</th></tr></thead><tbody id="time-table"></tbody></table></div></details>
+        <details class="report-notes"><summary>Cómo se cuentan las fechas</summary><p>Un registro sin mes o día conocido participa en su año; no se asigna una fecha artificial. Se utiliza la fecha de publicación, no la de ingreso al repositorio.</p></details>
+      </article>
+    </section>
+    <section id="universidades" data-report aria-labelledby="universidades-title" hidden>
+      <div class="table-heading"><h2 id="universidades-title">Investigaciones por universidad</h2></div>
+      <article class="panel"><div id="university-chart" class="bar-chart" role="list" aria-label="Cantidad por universidad"></div>
+        <div class="table-wrap"><table class="summary-table"><caption>Distribución de los registros filtrados</caption><thead><tr><th scope="col">Universidad</th><th scope="col">Registros</th><th scope="col">Participación</th><th scope="col">Con señales textuales</th><th scope="col">Con fecha completa</th></tr></thead><tbody id="university-table"></tbody></table></div>
+        <details class="report-notes"><summary>Alcance de la comparación</summary><p>UNJBG corresponde a una selección histórica por Tacna; UPT tiene otra fecha de captura. Estos conteos no representan toda la productividad de cada universidad. Una fecha incompleta no indica ausencia de publicaciones.</p></details>
+      </article>
+    </section>
+    <section id="madurez" data-report aria-labelledby="madurez-title" hidden>
+      <div class="table-heading"><h2 id="madurez-title">Señales de aplicación</h2></div>
+      <article class="panel"><div id="maturity-chart" class="bar-chart" role="list" aria-label="Cantidad por señal textual"></div>
+        <div class="table-wrap"><table class="summary-table"><caption>Clasificación de la selección filtrada</caption><thead><tr><th scope="col">Clasificación</th><th scope="col">Registros</th><th scope="col">Porcentaje</th></tr></thead><tbody id="maturity-table"></tbody></table></div>
+        <p class="chart-note">Indicios en el resumen; no acreditan una implementación. Consulta el catálogo para contrastarlos.</p>
+      </article>
+    </section>
+    <section id="temas" data-report aria-labelledby="temas-title" hidden>
+      <div class="table-heading"><h2 id="temas-title">Temas más frecuentes</h2></div>
+      <article class="panel"><p id="subject-note" class="scope"></p><div id="subject-chart" class="bar-chart" role="list" aria-label="Diez temas con más investigaciones"></div>
+        <div class="table-wrap"><table class="summary-table"><caption>Veinte temas principales de la selección</caption><thead><tr><th scope="col">Tema</th><th scope="col">Investigaciones</th><th scope="col">Porcentaje de la selección</th></tr></thead><tbody id="subject-table"></tbody></table></div>
+        <details class="report-notes"><summary>Cómo se cuentan los temas</summary><p>Cada investigación cuenta una vez por tema. Un estudio puede tener varias materias: los porcentajes no se suman. Se excluyen las URI de clasificación OCDE.</p></details>
+      </article>
+    </section>
+    <section id="explorar" data-report aria-labelledby="explorar-title" hidden>
+      <div class="table-heading"><h2 id="explorar-title">Catálogo de estudios</h2><p><strong id="results">0</strong> resultados</p></div>
+      <div class="table-wrap"><table><caption class="visually-hidden">Investigaciones filtradas, ordenadas por año y fecha disponible descendentes</caption><thead><tr><th scope="col">Investigación y autores</th><th scope="col">Fecha de publicación</th><th scope="col">Materias</th><th scope="col">Madurez estimada</th><th scope="col">Documento</th></tr></thead><tbody id="rows"></tbody></table></div>
       <div class="pagination"><p id="page-info" aria-live="polite"></p><div><button id="previous" type="button">← Anterior</button><button id="next" type="button">Siguiente →</button></div></div>
     </section>
-    <footer><p>Investigaciones sobre Tacna · Fuente académica: <a href="https://repositorio.unjbg.edu.pe/" target="_blank" rel="noopener noreferrer">UNJBG ↗</a></p><p>Datos actualizados semanalmente mediante GitHub Actions. <a id="download" href="https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/investigaciones_tacna.csv">Descargar CSV ↗</a></p></footer>
+    <footer><p>Fuentes: <a href="https://repositorio.unjbg.edu.pe/" target="_blank" rel="noopener noreferrer">UNJBG ↗</a> · <a href="https://repositorio.upt.edu.pe/" target="_blank" rel="noopener noreferrer">UPT ↗</a></p><a id="download" href="https://raw.githubusercontent.com/Durdenxito/investigaciones-tacna-data/main/data/investigaciones_tacna.csv">Descargar CSV ↓</a></footer>
   </main>
 </body>
 </html>

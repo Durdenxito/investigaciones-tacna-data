@@ -177,7 +177,9 @@ function render() {
   const stats = TacnaData.stats(selected);
   ['total', 'applied', 'production'].forEach(key => $(key).textContent = number.format(stats[key]));
   $('rate').textContent = stats.rate.toLocaleString('es-PE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' %';
-  $('status').textContent = `${number.format(selected.length)} de ${number.format(records.length)} investigaciones · Filtros compartidos entre los seis reportes`;
+  $('status').textContent = selected.length === records.length
+    ? `${number.format(records.length)} investigaciones`
+    : `${number.format(selected.length)} de ${number.format(records.length)} investigaciones`;
   const dates = selected.map(TacnaData.publicationDate), complete = dates.filter(d => d.day !== null).length;
   const monthOnly = dates.filter(d => d.month !== null && d.day === null).length;
   const missing = base.filter(r => { const d = TacnaData.publicationDate(r); return $('day').value ? d.day === null : d.month === null; }).length;
